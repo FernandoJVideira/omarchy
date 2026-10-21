@@ -98,6 +98,7 @@ Item {
   onFilterTextChanged: if (filterInput.text !== filterText) filterInput.text = filterText
   property int selectedIndex: 0
   property bool cursorActive: false
+  property int requestSerial: 0
   property var items: ({})
   property var itemOrder: []
   property var navStack: []
@@ -945,6 +946,7 @@ Item {
   }
 
   function openExistingMenu(initialMenu) {
+    requestSerial += 1
     mode = "menu"
     requestActive = false
     selectionFile = ""
@@ -968,6 +970,7 @@ Item {
   }
 
   function openDmenu(payload) {
+    requestSerial += 1
     mode = payload.mode === "input" ? "input" : "select"
     dmenuPrompt = String(payload.prompt || (mode === "input" ? Commons.I18n.t("menu.inputPrompt") : Commons.I18n.t("menu.selectPrompt")))
     dmenuOptions = Array.isArray(payload.options) ? payload.options : []
@@ -1112,14 +1115,6 @@ Item {
         root.updateDmenuChecks()
       }
       startNext()
-    }
-  }
-
-  Process {
-    id: resultProc
-    onExited: {
-      if (root.applySerial === root.requestSerial)
-        root.opened = false
     }
   }
 
